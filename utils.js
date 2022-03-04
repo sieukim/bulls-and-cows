@@ -1,5 +1,5 @@
 // 유효한 정답인지 확인하는 함수
-const validAnswer = (answer) => {
+export const validAnswer = (answer) => {
   for (let i = 0; i < answer.length; i++) {
     // 중복된 숫자가 있는 경우 false를 반환
     if (answer.indexOf(answer[i]) !== i) return false;
