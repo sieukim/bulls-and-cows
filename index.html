@@ -5,9 +5,25 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <link href="index.css" rel="stylesheet"/>
+    <title>Bulls and Cows</title>
 </head>
 <body>
-
+<div class="game-container">
+    <h1>숫자 야구 게임</h1>
+    <br/>
+    <form class="user-input-form" id="user-input-form">
+        <input class="user-input" id="user-input-0" maxlength="1" minlength="1" placeholder="숫" type="text"/>
+        <input class="user-input" id="user-input-1" maxlength="1" minlength="1" placeholder="자" type="text"/>
+        <input class="user-input" id="user-input-2" maxlength="1" minlength="1" placeholder="입" type="text"/>
+        <input class="user-input" id="user-input-3" maxlength="1" minlength="1" placeholder="력" type="text"/>
+        <br/>
+        <br/>
+        <button class="submit-button" id="submit-button" type="submit">확인</button>
+    </form>
+    <br/>
+    <div class="result-container" id="result-container"></div>
+</div>
+<script src="index.bundle.js"></script>
 </body>
 </html>
