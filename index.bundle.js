@@ -29,47 +29,21 @@
 
     var _utils = require("./utils");
 
-// form onSubmit 핸들러
-    const onSubmit = e => {
-      e.preventDefault();
-      e.stopPropagation(); // 사용자 정답
-
-      const userAnswer = (0, _utils.getUserAnswer)(); // 사용자 정답에 오류가 있는 경우
-
-      if (userAnswer.length === 0) {
-        return;
-      } // 결과
-
-
-      const result = (0, _utils.checkAnswer)(answer, userAnswer); // 결과 정보를 담는 컨테이너 가져오기
-
-      const resultContainer = document.getElementById('result-container'); // result-container에 결과 정보 추가
-
-      const div = document.createElement('div');
-      const userAnswerDiv = (0, _utils.getDiv)(`${userAnswer.join(' ')}`, 'result-row-user-answer');
-      const strikeDiv = (0, _utils.getDiv)(`${result.strike} Strike`, 'result-row-strike');
-      const ballDiv = (0, _utils.getDiv)(`${result.ball} Ball`, 'result-row-ball');
-      const outDiv = (0, _utils.getDiv)(`${result.out} Out`, 'result-row-out');
-      div.classList.add('result-row');
-      div.appendChild(userAnswerDiv);
-      div.appendChild(strikeDiv);
-      div.appendChild(ballDiv);
-      div.appendChild(outDiv);
-      resultContainer.appendChild(div); // 정답을 맞춘 경우
-
-      if (result.strike === answer.length) {
-        const replayButton = (0, _utils.getButton)('다시 하기', 'replay-button');
-        replayButton.addEventListener('click', () => location.reload());
-        resultContainer.appendChild(replayButton);
-      }
-    }; // 정답 생성
-
-
+// 정답 생성
     const answer = (0, _utils.createAnswer)(); // form 객체 가져오기
 
     const form = document.getElementById('user-input-form'); // form 객체에 onSubmit 핸들러 등록
 
-    form.addEventListener('submit', onSubmit);
+    form.addEventListener('submit', (0, _utils.onSubmit)(answer)); // input 객체 가져오기
+
+    const inputs = (0, _utils.getInputs)(); // submit button 객체 가져오기
+
+    const submitButton = document.getElementById('submit-button'); // input 객체에 onInput 핸들러 등록
+
+    inputs[0].addEventListener('input', (0, _utils.onInput)(inputs[1]));
+    inputs[1].addEventListener('input', (0, _utils.onInput)(inputs[2]));
+    inputs[2].addEventListener('input', (0, _utils.onInput)(inputs[3]));
+    inputs[3].addEventListener('input', (0, _utils.onInput)(submitButton));
 
   }, {"./utils": 2}], 2: [function (require, module, exports) {
     "use strict";
@@ -77,20 +51,141 @@
     Object.defineProperty(exports, "__esModule", {
       value: true
     });
-    exports.validAnswer = exports.getUserAnswer = exports.getDiv = exports.getButton = exports.createAnswer = exports.checkAnswer = void 0;
+    exports.validInputs = exports.onSubmit = exports.onInput = exports.initInputs = exports.hasNaNInput = exports.hasEmptyInput = exports.hasDuplicatedInput = exports.getInputs = exports.createDiv = exports.createButton = exports.createAnswer = exports.checkAnswer = void 0;
 
-// 유효한 정답인지 확인하는 함수
-    const validAnswer = answer => {
+    /*
+    * Input 관련 함수
+    */
+// input 객체를 가져오는 함수
+    const getInputs = () => {
+      // input 객체 가져오기
+      const input0 = document.getElementById('user-input-0');
+      const input1 = document.getElementById('user-input-1');
+      const input2 = document.getElementById('user-input-2');
+      const input3 = document.getElementById('user-input-3');
+      return [input0, input1, input2, input3];
+    }; // input 초기화 함수
+
+
+    exports.getInputs = getInputs;
+
+    const initInputs = inputs => {
+      inputs.forEach(input => input.value = '');
+    }; // 빈 문자를 포함하는지 확인하는 함수
+
+
+    exports.initInputs = initInputs;
+
+    const hasEmptyInput = answer => {
+      return !!answer.includes('');
+    }; // 중복된 숫자가 있는지 확인하는 함수
+
+
+    exports.hasEmptyInput = hasEmptyInput;
+
+    const hasDuplicatedInput = answer => {
       for (let i = 0; i < answer.length; i++) {
         // 중복된 숫자가 있는 경우 false를 반환
-        if (answer.indexOf(answer[i]) !== i) return false;
+        if (answer.indexOf(answer[i]) !== i) return true;
+      }
+
+      return false;
+    }; // 숫자가 아닌 문자를 포함한 경우
+
+
+    exports.hasDuplicatedInput = hasDuplicatedInput;
+
+    const hasNaNInput = answer => {
+      return answer.some(value => isNaN(value));
+    }; // input 조건 확인하는 함수
+
+
+    exports.hasNaNInput = hasNaNInput;
+
+    const validInputs = inputs => {
+      // 빈 문자를 포함하는 경우
+      if (hasEmptyInput(inputs)) {
+        alert('4자리 수를 입력해주세요.');
+        return false;
+      } // 중복된 숫자를 포함하는 경우
+
+
+      if (hasDuplicatedInput(inputs)) {
+        alert('중복된 숫자는 사용불가합니다.');
+        return false;
+      } // 숫자가 아닌 문자를 입력한 경우
+
+
+      if (hasNaNInput(inputs)) {
+        alert('숫자만 입력해주세요.');
+        return false;
       }
 
       return true;
-    }; // 정답 생성 함수
+    }; // input onInput 핸들러
 
 
-    exports.validAnswer = validAnswer;
+    exports.validInputs = validInputs;
+
+    const onInput = target => {
+      return e => {
+        if (!isNaN(e.target.value) && e.target.value !== '') {
+          target.focus();
+        }
+      };
+    };
+    /*
+    * form 관련 함수
+    */
+// form onSubmit 핸들러
+
+
+    exports.onInput = onInput;
+
+    const onSubmit = answer => {
+      return e => {
+        e.preventDefault();
+        e.stopPropagation(); // input 객체
+
+        const inputs = getInputs(); // 사용자 정답
+
+        const userAnswer = inputs.map(value => value.value); // 입력 조건에 맞지 않는 경우
+
+        if (!validInputs(userAnswer)) return; // 결과 정보
+
+        const result = checkAnswer(answer, userAnswer); // 결과 정보를 담는 컨테이너 가져오기
+
+        const resultContainer = document.getElementById('result-container'); // result-container에 결과 정보 추가
+
+        const div = document.createElement('div');
+        const userAnswerDiv = createDiv(`${userAnswer.join(' ')}`, 'result-row-user-answer');
+        const strikeDiv = createDiv(`${result.strike} Strike`, 'result-row-strike');
+        const ballDiv = createDiv(`${result.ball} Ball`, 'result-row-ball');
+        const outDiv = createDiv(`${result.out} Out`, 'result-row-out');
+        div.classList.add('result-row');
+        div.appendChild(userAnswerDiv);
+        div.appendChild(strikeDiv);
+        div.appendChild(ballDiv);
+        div.appendChild(outDiv);
+        resultContainer.appendChild(div); // 정답을 맞춘 경우 다시 하기 버튼 생성
+
+        if (result.strike === answer.length) {
+          const replayButton = createButton('다시 하기', 'replay-button');
+          replayButton.addEventListener('click', () => location.reload());
+          resultContainer.appendChild(replayButton);
+        } // input 값 초기화
+
+
+        initInputs(inputs);
+      };
+    };
+    /*
+    * 게임 관련 함수
+    */
+// 정답 생성 함수
+
+
+    exports.onSubmit = onSubmit;
 
     const createAnswer = () => {
       // 정답 범위
@@ -99,13 +194,13 @@
 
       while (true) {
         // 난수 생성
-        const randomNumber = Math.floor(Math.random() * (max - min + 1) + min).toString().split(''); // 유효한 정답인 경우
+        const randomNumber = Math.floor(Math.random() * (max - min + 1) + min).toString().split(''); // 중복된 숫자가 없는 경우
 
-        if (validAnswer(randomNumber)) {
+        if (!hasDuplicatedInput(randomNumber)) {
           return randomNumber;
         }
       }
-    }; // 결과 확인 함수
+    }; // 정답 확인 함수
 
 
     exports.createAnswer = createAnswer;
@@ -125,44 +220,16 @@
       }
 
       return result;
-    }; // 사용자 정답 가져오는 함수
+    };
+    /*
+    * tag 생성 함수
+    */
+// div 생성 함수
 
 
     exports.checkAnswer = checkAnswer;
 
-    const getUserAnswer = () => {
-      // input 값 가져오기
-      const input0 = document.getElementById('user-input-0').value;
-      const input1 = document.getElementById('user-input-1').value;
-      const input2 = document.getElementById('user-input-2').value;
-      const input3 = document.getElementById('user-input-3').value; // 사용자 정답
-
-      const userAnswer = [input0, input1, input2, input3]; // 빈 문자열인 경우
-
-      if (userAnswer.includes('')) {
-        alert('4자리 수를 입력해주세요.');
-        return [];
-      } // 유효한 정답이 아닌 경우
-
-
-      if (!validAnswer(userAnswer)) {
-        alert('유효한 숫자가 아닙니다. (각 자리 수 중복 불가)');
-        return [];
-      } // 숫자가 아닌 경우
-
-
-      if (isNaN(input0) || isNaN(input1) || isNaN(input2) || isNaN(input3)) {
-        alert('숫자만 입력해주세요.');
-        return [];
-      }
-
-      return userAnswer;
-    }; // div 생성 함수
-
-
-    exports.getUserAnswer = getUserAnswer;
-
-    const getDiv = (text, className) => {
+    const createDiv = (text, className) => {
       // div 생성
       const div = document.createElement('div'); // textNode 생성
 
@@ -175,9 +242,9 @@
     }; // button 생성 함수
 
 
-    exports.getDiv = getDiv;
+    exports.createDiv = createDiv;
 
-    const getButton = (text, className) => {
+    const createButton = (text, className) => {
       // button 생성
       const button = document.createElement('button'); // textNode 생성
 
@@ -189,7 +256,7 @@
       return button;
     };
 
-    exports.getButton = getButton;
+    exports.createButton = createButton;
 
   }, {}]
 }, {}, [1]);
