@@ -163,6 +163,22 @@ export const checkAnswer = (answer, userAnswer) => {
   return result;
 }
 
+// 규칙 설명 보여주기 button onClick 핸들러
+export const onClickShowRuleButton = () => {
+  // modal 객체 가져오기
+  const ruleModal = document.getElementById('rule-modal');
+  // display 변경
+  ruleModal.style.display = 'flex';
+}
+
+// 규칙 설명 닫기 button onClick 핸들러
+export const onClickCloseRuleButton = () => {
+  // modal 객체 가져오기
+  const ruleModal = document.getElementById('rule-modal');
+  // display 변경
+  ruleModal.style.display = 'none';
+}
+
 
 /*
 * tag 생성 함수

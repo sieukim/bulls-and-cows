@@ -9,19 +9,36 @@
     <title>Bulls and Cows</title>
     <meta name="google-site-verification" content="u9dl60X7u2i9hjfeX6pQKFM_03iTGZD5znZy3-X_NNE" />
     <meta name="description" content="숫자 야구 게임 웹 사이트"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 </head>
 <body>
+<div class="title-container">
     <div class="game-title">숫자 야구 게임</div>
+    <button class="showRule-button" id="showRule-button" >
+        <i class="bi bi-question-circle"></i>
+    </button>
+</div>
+<div class="rule-modal" id="rule-modal">
+    <p class="rule-title">정답 조건 </p>
+    <p class="rule-content"> 1. 정답은 1000부터 9999까지의 4자리 숫자이다. </p>
+    <p class="rule-content"> 2. 숫자와 위치를 맞는 경우엔 Strike이다. </p>
+    <p class="rule-content"> 3. 숫자만 맞는 경우엔 Ball이다. </p>
+    <p class="rule-content"> 4. 숫자와 위치 모두 틀린 경우엔 Out이다. </p>
     <br/>
-    <form class="user-input-form" id="user-input-form">
-        <input class="user-input" id="user-input-0" maxlength="1" minlength="1" placeholder="숫" type="text"/>
-        <input class="user-input" id="user-input-1" maxlength="1" minlength="1" placeholder="자" type="text"/>
-        <input class="user-input" id="user-input-2" maxlength="1" minlength="1" placeholder="입" type="text"/>
-        <input class="user-input" id="user-input-3" maxlength="1" minlength="1" placeholder="력" type="text"/>
-        <br/>
-        <br/>
-        <button class="submit-button" id="submit-button" type="submit">확인</button>
-    </form>
+    <p class="rule-title">입력 조건 </p>
+    <p class="rule-content">1. 0부터 9까지의 숫자를 이용하여 각 자리 수가 중복되지 않는 4자리 수를 입력한다. </p>
+    <button class="closeRule-button" id="closeRule-button">닫기</button>
+</div>
+<br/>
+<form class="user-input-form" id="user-input-form">
+    <input class="user-input" id="user-input-0" maxlength="1" minlength="1" placeholder="숫" type="text"/>
+    <input class="user-input" id="user-input-1" maxlength="1" minlength="1" placeholder="자" type="text"/>
+    <input class="user-input" id="user-input-2" maxlength="1" minlength="1" placeholder="입" type="text"/>
+    <input class="user-input" id="user-input-3" maxlength="1" minlength="1" placeholder="력" type="text"/>
+    <br/>
+    <br/>
+    <button class="submit-button" id="submit-button" type="submit">확인</button>
+</form>
     <div class="result-container" id="result-container"></div>
     <script src="index.bundle.js"></script>
 </body>
